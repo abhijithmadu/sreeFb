@@ -6,10 +6,12 @@ import TextInput from "./TextInput";
 import CustomButton from "./CustomButton";
 import { useForm } from "react-hook-form";
 import { BsMoon, BsSunFill } from "react-icons/bs";
+import { star } from "../assets";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
 import { FaInstagram } from "react-icons/fa";
+import { fetchPosts } from "../utils";
 
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
@@ -27,13 +29,15 @@ const TopBar = () => {
 //     dispatch(SetTheme(themeValue));
 //   };
 
-  const handleSearch = async (data) => {};
+  const handleSearch = async (data) => {
+    await fetchPosts(user?.token,dispatch,"",data);
+  };
 
   return (
     <div className='topbar w-full flex items-center justify-between py-3 md:py-6 px-4 bg-primary'>
       <Link to='/' className='flex gap-2 items-center'>
         <div className='p-1 md:p-2 bg-[#6f3aa3] rounded text-white'>
-          <FaInstagram />
+        <img src={star} alt="Stargram Icon" width={70} height={50} />
         </div>
         <span className='text-xl md:text-2xl text-[#6f3aa3] font-semibold'>
           StarrGram

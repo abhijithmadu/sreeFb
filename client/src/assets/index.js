@@ -1,3 +1,4 @@
 import NoProfile from "./userprofile.png";
 import BgImage from "./inst.jpeg";
-export { NoProfile, BgImage };
+import star from "./star.webp"
+export { NoProfile, BgImage ,star};

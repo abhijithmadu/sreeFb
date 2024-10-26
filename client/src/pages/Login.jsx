@@ -3,10 +3,15 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { CustomButton, Loading, TextInput } from "../components";
-import { BgImage } from "../assets";
+import { BgImage,star } from "../assets";
 import { FaInstagram } from "react-icons/fa";
+import { UserLogin } from "../redux/userSlice";
+import { apiRequest } from "../utils";
 
 const Login = () => {
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -15,11 +20,30 @@ const Login = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const res = await apiRequest({
+        url: "/auth/login",
+        data: data,
+        method: "POST",
+      });
+      if (res?.status === "failed") {
+        setErrMsg(res);
+      } else {
+        setErrMsg("");
+        const newData = { token: res?.token, ...res?.user };
+        dispatch(UserLogin(newData));
+        window.location.replace("/");
+      }
+      setIsSubmitting(false);
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
 
-  const [errMsg, setErrMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
+    }
+  };
+
   return (
     <div className="bg-bgColor w-full h-[100vh] flex items-center justify-center p-6">
       <div className="w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex bg-primary rounded-xl overflow-hidden shadow-xl">
@@ -27,7 +51,7 @@ const Login = () => {
         <div className="w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center ">
           <div className="w-full flex gap-2 items-center mb-6">
             <div className="p-2 bg-[#6f3aa3] rounded text-white">
-              <FaInstagram />
+            <img src={star} alt="Stargram Icon" width={70} height={50} />
             </div>
             <span className="text-2xl text-[#6f3aa3] font-semibold">
               StarGram
@@ -113,7 +137,7 @@ const Login = () => {
         <div className="hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-[#6f3aa3]">
           <div className="relative w-full flex items-center justify-center">
             <img
-              src={BgImage}
+              src={star}
               alt="Bg Image"
               className="w-48 2xl:w-64 h-48 2xl:h-64 rounded-full object-cover"
             />

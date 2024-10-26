@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { CustomButton, Loading, TextInput } from "../components";
-import { BgImage } from "../assets";
+import { BgImage,star } from "../assets";
 import { FaInstagram } from "react-icons/fa";
+import { apiRequest } from "../utils";
 
 const Register = () => {
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -16,41 +20,59 @@ const Register = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const res = await apiRequest({
+        url: "/auth/register",
+        data: data,
+        method: "POST",
+      });
+      if (res?.status === "failed") {
+        setErrMsg(res);
+      } else {
+        setErrMsg(res);
+        setInterval(() => {
+          window.location.replace("/login");
+        }, 5000);
+      }
+      setIsSubmitting(false);
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
 
-  const [errMsg, setErrMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
+    }
+  };
 
   return (
-    <div className='bg-bgColor w-full h-[100vh] flex items-center justify-center p-6'>
-      <div className='w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex flex-row-reverse bg-primary rounded-xl overflow-hidden shadow-xl'>
+    <div className="bg-bgColor w-full h-[100vh] flex items-center justify-center p-6">
+      <div className="w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex flex-row-reverse bg-primary rounded-xl overflow-hidden shadow-xl">
         {/* LEFT */}
-        <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center '>
-          <div className='w-full flex gap-2 items-center mb-6'>
-          <div className="p-2 bg-[#6f3aa3] rounded text-white">
-              <FaInstagram />
+        <div className="w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center ">
+          <div className="w-full flex gap-2 items-center mb-6">
+            <div className="p-2 bg-[#6f3aa3] rounded text-white">
+            <img src={star} alt="Stargram Icon" width={70} height={50} />
             </div>
             <span className="text-2xl text-[#6f3aa3] font-semibold">
               StarGram
             </span>
           </div>
 
-          <p className='text-ascent-1 text-base font-semibold'>
+          <p className="text-ascent-1 text-base font-semibold">
             Create your account
           </p>
 
           <form
-            className='py-8 flex flex-col gap-5'
+            className="py-8 flex flex-col gap-5"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className='w-full flex flex-col lg:flex-row gap-1 md:gap-2'>
+            <div className="w-full flex flex-col lg:flex-row gap-1 md:gap-2">
               <TextInput
-                name='firstName'
-                label='First Name'
-                placeholder='First Name'
-                type='text'
-                styles='w-full'
+                name="firstName"
+                label="First Name"
+                placeholder="First Name"
+                type="text"
+                styles="w-full"
                 register={register("firstName", {
                   required: "First Name is required!",
                 })}
@@ -58,10 +80,10 @@ const Register = () => {
               />
 
               <TextInput
-                label='Last Name'
-                placeholder='Last Name'
-                type='lastName'
-                styles='w-full'
+                label="Last Name"
+                placeholder="Last Name"
+                type="lastName"
+                styles="w-full"
                 register={register("lastName", {
                   required: "Last Name do no match",
                 })}
@@ -70,24 +92,24 @@ const Register = () => {
             </div>
 
             <TextInput
-              name='email'
-              placeholder='email@example.com'
-              label='Email Address'
-              type='email'
+              name="email"
+              placeholder="email@example.com"
+              label="Email Address"
+              type="email"
               register={register("email", {
                 required: "Email Address is required",
               })}
-              styles='w-full'
+              styles="w-full"
               error={errors.email ? errors.email.message : ""}
             />
 
-            <div className='w-full flex flex-col lg:flex-row gap-1 md:gap-2'>
+            <div className="w-full flex flex-col lg:flex-row gap-1 md:gap-2">
               <TextInput
-                name='password'
-                label='Password'
-                placeholder='Password'
-                type='password'
-                styles='w-full'
+                name="password"
+                label="Password"
+                placeholder="Password"
+                type="password"
+                styles="w-full"
                 register={register("password", {
                   required: "Password is required!",
                 })}
@@ -95,10 +117,10 @@ const Register = () => {
               />
 
               <TextInput
-                label='Confirm Password'
-                placeholder='Password'
-                type='password'
-                styles='w-full'
+                label="Confirm Password"
+                placeholder="Password"
+                type="password"
+                styles="w-full"
                 register={register("cPassword", {
                   validate: (value) => {
                     const { password } = getValues();
@@ -132,17 +154,17 @@ const Register = () => {
               <Loading />
             ) : (
               <CustomButton
-                type='submit'
+                type="submit"
                 containerStyles={`inline-flex justify-center rounded-md bg-[#6f3aa3] px-8 py-3 text-sm font-medium text-white outline-none`}
-                title='Create Account'
+                title="Create Account"
               />
             )}
           </form>
 
-          <p className='text-ascent-2 text-sm text-center'>
+          <p className="text-ascent-2 text-sm text-center">
             Already has an account?{" "}
             <Link
-              to='/login'
+              to="/login"
               className="text-[#6f3aa3] font-semibold ml-2 cursor-pointer"
             >
               Login
@@ -150,22 +172,21 @@ const Register = () => {
           </p>
         </div>
         {/* RIGHT */}
-        <div className='hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-[#6f3aa3]'>
-          <div className='relative w-full flex items-center justify-center'>
+        <div className="hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-[#6f3aa3]">
+          <div className="relative w-full flex items-center justify-center">
             <img
-              src={BgImage}
-              alt='Bg Image'
-              className='w-48 2xl:w-64 h-48 2xl:h-64 rounded-full object-cover'
+              src={star}
+              alt="Bg Image"
+              className="w-48 2xl:w-64 h-48 2xl:h-64 rounded-full object-cover"
             />
-
-            
           </div>
 
-          <div className='mt-16 text-center'>
-            <p className='text-white text-base'>
-            Gather with friends and partake in shared moments of joy and laughter
+          <div className="mt-16 text-center">
+            <p className="text-white text-base">
+              Gather with friends and partake in shared moments of joy and
+              laughter
             </p>
-            <span className='text-sm text-white/80'>
+            <span className="text-sm text-white/80">
               Share memories with friends and the world.
             </span>
           </div>
